@@ -1,5 +1,10 @@
+//! This crate provides a simple function to parse brainfuck String to human readable(ASCII characters)
+
 use error::BrainFuckError;
 use unit::Unit;
+
+/// Function to parse input to human readable(ascii characters) String
+/// `inputs` is optional
 pub fn brainfuck_to_string(
     source_string: impl ToString,
     inputs: Option<Vec<char>>,
