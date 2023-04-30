@@ -2,8 +2,10 @@
 name = "brainfuck_interpreter"
 version = "0.1.0"
 edition = "2021"
+authors = ["BryantTseng"]
 homepage = "https://github.com/BryantTseng/brainfuck_interpreter"
 repository = "https://github.com/BryantTseng/brainfuck_interpreter"
+description = "brainfuck interpreter written in Rust"
 license-file = "LICENSE"
 readme = "README.md"
 keywords = ["brainfuck"]
