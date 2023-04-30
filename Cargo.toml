@@ -2,6 +2,11 @@
 name = "brainfuck_interpreter"
 version = "0.1.0"
 edition = "2021"
+homepage = "https://github.com/BryantTseng/brainfuck_interpreter"
+repository = "https://github.com/BryantTseng/brainfuck_interpreter"
+license-file = "LICENSE"
+readme = "README.md"
+keywords = ["brainfuck"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
