@@ -4,7 +4,6 @@ use error::BrainFuckError;
 use unit::Unit;
 
 /// Function to parse input to human readable(ascii characters) String
-/// `inputs` is optional
 pub fn brainfuck_to_string(
     source_string: impl ToString,
     inputs: Option<Vec<char>>,
@@ -22,7 +21,13 @@ pub fn brainfuck_to_string(
     if source_chars.contains(&',') {
         inner_inputs = match inputs {
             Some(v) => v,
-            None => return Err(BrainFuckError::InputNotProvidedError),
+            None => {
+                #[cfg(not(feature = "ignore-input-error"))]
+                return Err(BrainFuckError::InputNotProvidedError);
+
+                #[cfg(feature = "ignore-input-error")]
+                vec![]
+            }
         };
     }
 
@@ -62,12 +67,17 @@ pub fn brainfuck_to_string(
                 }
             }
             ',' => {
-                let f = match inner_inputs.first() {
-                    Some(v) => v,
-                    None => return Err(BrainFuckError::InputNotEnoughError),
+                match inner_inputs.first() {
+                    Some(v) => {
+                        unit_vec[pointer] = Unit::new_from_char(v);
+                        inner_inputs.remove(0);
+                    }
+                    None =>
+                    {
+                        #[cfg(not(feature = "ignore-input-error"))]
+                        return Err(BrainFuckError::InputNotEnoughError)
+                    }
                 };
-                unit_vec[pointer] = Unit::new_from_char(&f);
-                inner_inputs.remove(0);
             }
             _ => {}
         }
