@@ -1,5 +1,9 @@
+use error::BrainFuckError;
 use unit::Unit;
-pub fn brainfuck_to_string(source_string: impl ToString, inputs: Option<Vec<char>>) -> String {
+pub fn brainfuck_to_string(
+    source_string: impl ToString,
+    inputs: Option<Vec<char>>,
+) -> Result<String, BrainFuckError> {
     let source_chars: Vec<char> = source_string.to_string().chars().collect();
     let mut unit_vec: Vec<Unit> = vec![Unit::new(0)];
     let mut pointer = 0;
@@ -11,7 +15,10 @@ pub fn brainfuck_to_string(source_string: impl ToString, inputs: Option<Vec<char
     let mut inner_inputs = Vec::new();
 
     if source_chars.contains(&',') {
-        inner_inputs = inputs.expect("need inputs");
+        inner_inputs = match inputs {
+            Some(v) => v,
+            None => return Err(BrainFuckError::InputNotProvidedError),
+        };
     }
 
     while index < source_chars.len() {
@@ -36,11 +43,11 @@ pub fn brainfuck_to_string(source_string: impl ToString, inputs: Option<Vec<char
             }
             '[' => {
                 if unit_vec[pointer].get_raw() == 0 {
-                    let a = source_chars[index..]
-                        .iter()
-                        .position(|&x| x == ']')
-                        .expect("can't find ]");
-                    index = a;
+                    let loop_closed_index = source_chars[index..].iter().position(|&x| x == ']');
+                    index = match loop_closed_index {
+                        Some(v) => v,
+                        None => return Err(BrainFuckError::LoopNotClosedError(index)),
+                    };
                 }
                 previous_loop_start_index = index;
             }
@@ -50,7 +57,10 @@ pub fn brainfuck_to_string(source_string: impl ToString, inputs: Option<Vec<char
                 }
             }
             ',' => {
-                let f = inner_inputs.first().expect("input not enough").clone();
+                let f = match inner_inputs.first() {
+                    Some(v) => v,
+                    None => return Err(BrainFuckError::InputNotEnoughError),
+                };
                 unit_vec[pointer] = Unit::new_from_char(&f);
                 inner_inputs.remove(0);
             }
@@ -62,9 +72,10 @@ pub fn brainfuck_to_string(source_string: impl ToString, inputs: Option<Vec<char
         index += 1;
     }
 
-    result
+    Ok(result)
 }
 
+mod error;
 mod unit;
 
 #[cfg(test)]
@@ -73,14 +84,14 @@ mod test {
     #[test]
     fn hello_world() {
         let brain_fuck_string = "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.".to_string();
-        let readable_string = brainfuck_to_string(&brain_fuck_string, None);
+        let readable_string = brainfuck_to_string(&brain_fuck_string, None).unwrap();
         assert_eq!(readable_string, "Hello World!");
     }
 
     #[test]
     fn simple() {
         let brain_fuck_string = ">>><<+++++++++++++++++++++++++++++++++.++.--.";
-        let readable_string = brainfuck_to_string(&brain_fuck_string, None);
+        let readable_string = brainfuck_to_string(&brain_fuck_string, None).unwrap();
         assert_eq!(readable_string, "!#!");
     }
 
@@ -88,7 +99,7 @@ mod test {
     fn input() {
         let brain_fuck_string = ",>,.<.";
         let input = vec!['a', 'b'];
-        let readable_string = brainfuck_to_string(&brain_fuck_string, Some(input));
+        let readable_string = brainfuck_to_string(&brain_fuck_string, Some(input)).unwrap();
         assert_eq!(readable_string, "ba");
     }
 }
