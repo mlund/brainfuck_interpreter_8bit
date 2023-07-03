@@ -2,9 +2,6 @@
 name = "brainfuck_interpreter"
 version = "0.1.0"
 edition = "2021"
-authors = ["BryantTseng"]
-homepage = "https://github.com/BryantTseng/brainfuck_interpreter"
-repository = "https://github.com/BryantTseng/brainfuck_interpreter"
 description = "brainfuck interpreter written in Rust"
 license-file = "LICENSE"
 readme = "README.md"
@@ -13,6 +10,20 @@ keywords = ["brainfuck"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+mos-alloc = "0.2"
+ufmt-stdio = "0"
 
 [features]
 ignore-input-error = []
+
+[profile.dev]
+opt-level = 2
+lto = true
+debug = 2
+codegen-units = 1
+
+[profile.release]
+opt-level = "s"
+lto = true
+debug = 0
+strip = true

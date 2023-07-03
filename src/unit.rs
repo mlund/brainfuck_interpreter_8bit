@@ -24,7 +24,7 @@ impl Unit {
     }
 }
 
-impl std::ops::AddAssign<u8> for Unit {
+impl core::ops::AddAssign<u8> for Unit {
     fn add_assign(&mut self, rhs: u8) {
         self.value += rhs as i16;
         if self.value > 256 {
@@ -33,7 +33,7 @@ impl std::ops::AddAssign<u8> for Unit {
     }
 }
 
-impl std::ops::SubAssign<u8> for Unit {
+impl core::ops::SubAssign<u8> for Unit {
     fn sub_assign(&mut self, rhs: u8) {
         self.value -= rhs as i16;
 
@@ -43,37 +43,8 @@ impl std::ops::SubAssign<u8> for Unit {
     }
 }
 
-impl std::fmt::Display for Unit {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl core::fmt::Display for Unit {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "{}", self.value)
-    }
-}
-
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    #[test]
-    fn test_plus_minus_symbol() {
-        let mut a = Unit::new(8);
-        a += 3;
-        assert_eq!(11, a.get_raw());
-        a -= 3;
-        assert_eq!(8, a.get_raw());
-    }
-    #[test]
-    fn test_wrap_around() {
-        let mut a = Unit::new(250);
-        a += 7;
-        assert_eq!(1, a.get_raw());
-
-        a -= 7;
-        assert_eq!(250, a.get_raw());
-    }
-    #[test]
-    fn test_acsii_char() {
-        let a = Unit::new(50);
-        let b = a.get_char();
-        assert_eq!(b, '2');
     }
 }

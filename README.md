@@ -1,20 +1,18 @@
-# brainfuck_interpreter
+# 8-bit brainfuck interpreter
 
-## Install
+This is an 8-bit port of the crate
+[`brainfuck_interpreter`](https://github.com/BryantTseng/brainfuck_interpreter)
+by BryantTseng.
+This requires [`rust-mos`](https://llvm-mos.org/wiki/Rust) and
+to run using the vanilla simulator from the llvm-mos-sdk, do:
 
-```
-cargo add brainfuck_interpreter
-```
+~~~ bash
+cargo run --release --example hello
+~~~
 
-## Example
+You may also target specific 8-bit micro-computers and
+then run using an emulate after building:
 
-see [examples](./examples/)
-
-## Features
-
-### Ignore-input-error
-
-if you want to ignore the error from input not provided/not enough, enable feature `ignore-input-error`
-
-see [example](./examples/ignore-input-error/)
-
+~~~ bash
+cargo build --release --target mos-c64-none --example hello
+~~~

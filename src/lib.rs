@@ -1,5 +1,18 @@
 //! This crate provides a simple function to parse brainfuck String to human readable(ASCII characters)
 
+#![no_std]
+#![feature(error_in_core)]
+
+extern crate alloc;
+extern crate mos_alloc;
+extern crate ufmt_stdio;
+
+mod error;
+mod unit;
+
+//use core::option::{Option, Option::Some};
+use alloc::string::{String, ToString};
+use alloc::{vec, vec::Vec};
 use error::BrainFuckError;
 use unit::Unit;
 
@@ -88,33 +101,4 @@ pub fn brainfuck_to_string(
     }
 
     Ok(result)
-}
-
-mod error;
-mod unit;
-
-#[cfg(test)]
-mod test {
-    use super::*;
-    #[test]
-    fn hello_world() {
-        let brain_fuck_string = "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.".to_string();
-        let readable_string = brainfuck_to_string(&brain_fuck_string, None).unwrap();
-        assert_eq!(readable_string, "Hello World!");
-    }
-
-    #[test]
-    fn simple() {
-        let brain_fuck_string = ">>><<+++++++++++++++++++++++++++++++++.++.--.";
-        let readable_string = brainfuck_to_string(&brain_fuck_string, None).unwrap();
-        assert_eq!(readable_string, "!#!");
-    }
-
-    #[test]
-    fn input() {
-        let brain_fuck_string = ",>,.<.";
-        let input = vec!['a', 'b'];
-        let readable_string = brainfuck_to_string(&brain_fuck_string, Some(input)).unwrap();
-        assert_eq!(readable_string, "ba");
-    }
 }
