@@ -11,7 +11,6 @@ impl Unit {
     /// Create new Unit from char
     pub fn new_from_char(v: &char) -> Self {
         let b = v.clone() as u8;
-
         Unit { value: b as i16 }
     }
     /// Get u8 value of the Unit

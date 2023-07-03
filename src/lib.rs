@@ -11,27 +11,24 @@ mod error;
 mod unit;
 
 //use core::option::{Option, Option::Some};
-use alloc::string::{String, ToString};
+use alloc::string::{String};
 use alloc::{vec, vec::Vec};
 use error::BrainFuckError;
 use unit::Unit;
 
 /// Function to parse input to human readable(ascii characters) String
 pub fn brainfuck_to_string(
-    source_string: impl ToString,
+    source_chars: &str,
     inputs: Option<Vec<char>>,
 ) -> Result<String, BrainFuckError> {
-    let source_chars: Vec<char> = source_string.to_string().chars().collect();
     let mut unit_vec: Vec<Unit> = vec![Unit::new(0)];
     let mut pointer = 0;
     let mut result: String = String::new();
-
     let mut index = 0;
     let mut previous_loop_start_index = 0;
-
     let mut inner_inputs = Vec::new();
 
-    if source_chars.contains(&',') {
+    if source_chars.contains(',') {
         inner_inputs = match inputs {
             Some(v) => v,
             None => {
@@ -45,28 +42,20 @@ pub fn brainfuck_to_string(
     }
 
     while index < source_chars.len() {
-        match source_chars[index] {
-            '+' => {
-                unit_vec[pointer] += 1;
-            }
-            '-' => {
-                unit_vec[pointer] -= 1;
-            }
+        match source_chars.as_bytes()[index] as char {
+            '+' => unit_vec[pointer] += 1,
+            '-' => unit_vec[pointer] -= 1,
             '>' => {
                 pointer += 1;
                 if unit_vec.len() - 1 < pointer {
                     unit_vec.push(Unit::new(0));
                 }
             }
-            '<' => {
-                pointer -= 1;
-            }
-            '.' => {
-                result.push(unit_vec[pointer].get_char());
-            }
+            '<' => pointer -= 1,
+            '.' => result.push(unit_vec[pointer].get_char()),
             '[' => {
                 if unit_vec[pointer].get_raw() == 0 {
-                    let loop_closed_index = source_chars[index..].iter().position(|&x| x == ']');
+                    let loop_closed_index = source_chars[index..].chars().position(|x| x == ']');
                     index = match loop_closed_index {
                         Some(v) => v,
                         None => return Err(BrainFuckError::LoopNotClosedError(index)),
@@ -99,6 +88,5 @@ pub fn brainfuck_to_string(
         }
         index += 1;
     }
-
     Ok(result)
 }
