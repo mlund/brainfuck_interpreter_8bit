@@ -7,8 +7,8 @@ extern crate alloc;
 extern crate mos_alloc;
 extern crate ufmt_stdio;
 
-mod error;
-mod unit;
+pub mod error;
+pub mod unit;
 
 //use core::option::{Option, Option::Some};
 use alloc::string::String;
@@ -21,9 +21,9 @@ pub fn brainfuck_to_string(
     source_chars: &str,
     inputs: Option<Vec<char>>,
 ) -> Result<String, BrainFuckError> {
-    let mut unit_vec: Vec<Unit> = vec![Unit::new(0)];
+    let mut unit_vec: Vec<Unit> = vec![Unit::default()];
     let mut pointer = 0;
-    let mut result: String = String::new();
+    let mut result = String::new();
     let mut index = 0;
     let mut previous_loop_start_index = 0;
     let mut inner_inputs = Vec::new();
@@ -36,7 +36,7 @@ pub fn brainfuck_to_string(
                 return Err(BrainFuckError::InputNotProvidedError);
 
                 #[cfg(feature = "ignore-input-error")]
-                vec![]
+                Vec::new()
             }
         };
     }
@@ -48,13 +48,13 @@ pub fn brainfuck_to_string(
             b'>' => {
                 pointer += 1;
                 if unit_vec.len() - 1 < pointer {
-                    unit_vec.push(Unit::new(0));
+                    unit_vec.push(Unit::default());
                 }
             }
             b'<' => pointer -= 1,
-            b'.' => result.push(unit_vec[pointer].get_char()),
+            b'.' => result.push(unit_vec[pointer].into()),
             b'[' => {
-                if unit_vec[pointer].get_raw() == 0 {
+                if u8::from(unit_vec[pointer]) == 0 {
                     let loop_closed_index = source_chars[index..].chars().position(|x| x == ']');
                     index = match loop_closed_index {
                         Some(v) => v,
@@ -64,14 +64,14 @@ pub fn brainfuck_to_string(
                 previous_loop_start_index = index;
             }
             b']' => {
-                if unit_vec[pointer].get_raw() != 0 {
+                if u8::from(unit_vec[pointer]) != 0 {
                     index = previous_loop_start_index - 1;
                 }
             }
             b',' => {
-                match inner_inputs.first() {
+                match inner_inputs.first().copied() {
                     Some(v) => {
-                        unit_vec[pointer] = Unit::new_from_char(v);
+                        unit_vec[pointer] = v.into();
                         inner_inputs.remove(0);
                     }
                     None =>

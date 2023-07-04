@@ -1,25 +1,23 @@
-#[derive(Debug)]
+#[derive(Debug, Default, Clone, Copy)]
 pub struct Unit {
     value: i16,
 }
 
-impl Unit {
-    /// Create new Unit from u8
-    pub fn new(v: u8) -> Self {
-        Unit { value: v as i16 }
+impl From<Unit> for char {
+    fn from(value: Unit) -> Self {
+        char::from_u32(u8::from(value) as u32).unwrap()
     }
-    /// Create new Unit from char
-    pub fn new_from_char(v: &char) -> Self {
-        let b = v.clone() as u8;
-        Unit { value: b as i16 }
-    }
-    /// Get u8 value of the Unit
-    pub fn get_raw(&self) -> u8 {
-        self.value as u8
-    }
-    /// Get ASCII char from Unit
-    pub fn get_char(&self) -> char {
-        char::from_u32(self.value as u32).unwrap()
+}
+
+impl From<Unit> for u8 {
+    fn from(value: Unit) -> Self {
+        value.value as u8
+    }    
+}
+
+impl From<char> for Unit {
+    fn from(value: char) -> Self {
+        Unit { value: value as i16 }
     }
 }
 
@@ -35,7 +33,6 @@ impl core::ops::AddAssign<u8> for Unit {
 impl core::ops::SubAssign<u8> for Unit {
     fn sub_assign(&mut self, rhs: u8) {
         self.value -= rhs as i16;
-
         if self.value < 0 {
             self.value += 256;
         }

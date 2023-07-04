@@ -4,17 +4,16 @@
 
 extern crate alloc;
 
-use alloc::string::ToString;
 use brainfuck_interpreter::brainfuck_to_string;
 use core::panic::PanicInfo;
 use ufmt_stdio::*;
 
 #[start]
 fn _main(_argc: isize, _argv: *const *const u8) -> isize {
-    let brain_fuck_string = "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.";
-    let readable_string = brainfuck_to_string(&brain_fuck_string, None).unwrap();
-    println!("Input  = {}", brain_fuck_string);
-    println!("Output = {}", readable_string.as_str());
+    let input = "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.";
+    let output = brainfuck_to_string(&input, None).unwrap();
+    println!("Input: {}", input);
+    println!("Output: {}", output.as_str());
     0
 }
 
