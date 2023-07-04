@@ -13,7 +13,8 @@ use ufmt_stdio::*;
 fn _main(_argc: isize, _argv: *const *const u8) -> isize {
     let brain_fuck_string = "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.";
     let readable_string = brainfuck_to_string(&brain_fuck_string, None).unwrap();
-    println!("{}", readable_string.as_str());
+    println!("Input  = {}", brain_fuck_string);
+    println!("Output = {}", readable_string.as_str());
     0
 }
 

@@ -11,7 +11,7 @@ mod error;
 mod unit;
 
 //use core::option::{Option, Option::Some};
-use alloc::string::{String};
+use alloc::string::String;
 use alloc::{vec, vec::Vec};
 use error::BrainFuckError;
 use unit::Unit;
@@ -42,18 +42,18 @@ pub fn brainfuck_to_string(
     }
 
     while index < source_chars.len() {
-        match source_chars.as_bytes()[index] as char {
-            '+' => unit_vec[pointer] += 1,
-            '-' => unit_vec[pointer] -= 1,
-            '>' => {
+        match source_chars.as_bytes()[index] {
+            b'+' => unit_vec[pointer] += 1,
+            b'-' => unit_vec[pointer] -= 1,
+            b'>' => {
                 pointer += 1;
                 if unit_vec.len() - 1 < pointer {
                     unit_vec.push(Unit::new(0));
                 }
             }
-            '<' => pointer -= 1,
-            '.' => result.push(unit_vec[pointer].get_char()),
-            '[' => {
+            b'<' => pointer -= 1,
+            b'.' => result.push(unit_vec[pointer].get_char()),
+            b'[' => {
                 if unit_vec[pointer].get_raw() == 0 {
                     let loop_closed_index = source_chars[index..].chars().position(|x| x == ']');
                     index = match loop_closed_index {
@@ -63,12 +63,12 @@ pub fn brainfuck_to_string(
                 }
                 previous_loop_start_index = index;
             }
-            ']' => {
+            b']' => {
                 if unit_vec[pointer].get_raw() != 0 {
                     index = previous_loop_start_index - 1;
                 }
             }
-            ',' => {
+            b',' => {
                 match inner_inputs.first() {
                     Some(v) => {
                         unit_vec[pointer] = Unit::new_from_char(v);
