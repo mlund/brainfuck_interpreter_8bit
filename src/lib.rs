@@ -17,8 +17,8 @@ use error::BrainFuckError;
 use unit::Unit;
 
 /// Function to parse input to human readable(ascii characters) String
-pub fn brainfuck_to_string(
-    source_chars: &str,
+pub fn interpret(
+    source_chars: &[u8],
     inputs: Option<Vec<char>>,
 ) -> Result<String, BrainFuckError> {
     let mut unit_vec: Vec<Unit> = vec![Unit::default()];
@@ -28,7 +28,7 @@ pub fn brainfuck_to_string(
     let mut previous_loop_start_index = 0;
     let mut inner_inputs = Vec::new();
 
-    if source_chars.contains(',') {
+    if source_chars.contains(&b',') {
         inner_inputs = match inputs {
             Some(v) => v,
             None => {
@@ -42,7 +42,7 @@ pub fn brainfuck_to_string(
     }
 
     while index < source_chars.len() {
-        match source_chars.as_bytes()[index] {
+        match source_chars[index] {
             b'+' => unit_vec[pointer] += 1,
             b'-' => unit_vec[pointer] -= 1,
             b'>' => {
@@ -55,7 +55,7 @@ pub fn brainfuck_to_string(
             b'.' => result.push(unit_vec[pointer].into()),
             b'[' => {
                 if u8::from(unit_vec[pointer]) == 0 {
-                    let loop_closed_index = source_chars[index..].chars().position(|x| x == ']');
+                    let loop_closed_index = source_chars[index..].iter().position(|x| x == &b']');
                     index = match loop_closed_index {
                         Some(v) => v,
                         None => return Err(BrainFuckError::LoopNotClosedError(index)),

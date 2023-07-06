@@ -26,4 +26,6 @@ codegen-units = 1
 opt-level = "s"
 lto = true
 debug = 0
+codegen-units = 1
 strip = true
+
